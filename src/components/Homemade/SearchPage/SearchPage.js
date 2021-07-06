@@ -77,7 +77,20 @@ const SearchPage = () => {
     setResults(results)
     // console.log(results)
   }
+  console.log("[x] (SearchPage) isActive", isActive)
+  console.log("[x] (SearchPage) products", products)
 
+  const handleChangeProducts = (newFilters) => {
+    console.log('[x] handleChangeProducts products]', products)
+    console.log('[x] handleChangeProducts newFilters]', newFilters)
+    // here a map with a filter, something like that. You use the newFilters
+    // loop on the products, and filter with those newFilters, but you have to
+    // fix the click on the other side, where are adding each id to the array, that's wrong
+    // const filteredProducts = products.filter((product) => )
+    // const filteredProducts = products
+    //console.log("[x] handleChangeProducts filteredProducts", filteredProducts)
+    setProducts(products)
+  }
   return (
     <>
       <Grid container spacing={3}>
@@ -106,7 +119,10 @@ const SearchPage = () => {
         </Grid>
       </Grid>
       <Box pt={1}>
-        <CategoryList categories={categories} />
+        <CategoryList
+          categories={categories}
+          changeProducts={handleChangeProducts}
+        />
       </Box>
       <Box pt={1}>
         <ProductList products={isActive ? products : results} />

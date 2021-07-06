@@ -20,7 +20,7 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const CategoryList = ({ categories }) => {
+const CategoryList = ({ categories, changeProducts }) => {
   const classes = useStyles()
 
   const [myFilters, setMyFilters] = useState({
@@ -48,29 +48,36 @@ const CategoryList = ({ categories }) => {
       limit,
       newFilters
     ).then((data) => {
-      console.log(data)
+      console.log('[x] loadFilteredResults data', data)
     })
   }
 
   const clickFilters = (filterBy, categoryId) => {
-    console.log("Product", filterBy, categoryId)
+    console.log("[x] (clickFilters) Product", filterBy, categoryId)
+    console.log("[x] (clickFilters) myFilters", myFilters.filters.category)
+    const categoryIdArray = myFilters.filters.category
+    console.log("categoryIdArray", categoryIdArray)
+    // this one has to be fixed
+    const isThere = categoryIdArray.includes(categoryId)
+    console.log("isTgere", isThere)
     const newFilters = {
       ...myFilters,
       filters: {
-        [filterBy]: [...myFilters.filters[filterBy], categoryId],
+        [filterBy]: isThere ? [...myFilters.filters[filterBy], categoryId] : [],
       },
     }
-    console.log(newFilters)
+    console.log("[x] (clickFilters) newFilters", newFilters)
     loadFilteredResults(newFilters.filters)
     setMyFilters(newFilters)
+    changeProducts(newFilters)
   }
 
   useEffect(() => {
     loadFilteredResults(myFilters.filters)
   }, [])
 
-  //   console.log("categories", categories)
-
+  console.log("[x] categories", categories)
+  console.log("[x] myFilters", myFilters)
   return (
     <div className={classes.scrollMenu}>
       {categories.map((category) => {
