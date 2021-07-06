@@ -1,0 +1,64 @@
+.m-1 {
+  margin: 5px;
+}
+
+.m-2 {
+  margin: 10px;
+}
+
+.row {
+  display: flex;
+}
+
+.space-between {
+  justify-content: space-between;
+}
+
+.IconText {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 1px;
+}
+
+.container {
+  position: relative;
+}
+
+.ProductHeader {
+  z-index: -1;
+}
+
+.ProductBody {
+  position: relative;
+  font-family: visby;
+}
+
+.ProductDetailName {
+  font-weight: bold;
+  font-size: 24px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 240px;
+  font-family: 'visby';
+}
+
+.ProductDetailPrice {
+  font-weight: bold;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.BottomButton {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 10px;
+  font-family: visby;
+}
+
+.ProductDescription {
+  font-family: 'visby' !important;
+}

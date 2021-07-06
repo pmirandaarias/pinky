@@ -1,0 +1,96 @@
+.HeroHeader {
+  height: 120px;
+  width: 100%;
+  position: fixed;
+}
+
+.BannerImage {
+  height: 100%;
+  width: 100%;
+  object-fit: cover;
+}
+
+.HeadingDetails {
+  display: flex;
+  justify-content: space-between;
+  background-color: white;
+  border-radius: 0 10px 0 10px;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2);
+}
+
+.LogoAndTitle {
+  display: flex;
+  margin: 0;
+  padding: 0;
+}
+
+.ShopLogo {
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 10px;
+  height: 3em;
+  width: 3em;
+}
+
+.ShopName {
+  font-size: 1em;
+  font-weight: bold;
+}
+
+.ShopLocation {
+  font-size: 0.9em;
+}
+
+.ShopLocation__logo {
+  margin-bottom: -0.2em;
+}
+
+.ShopLocation__text {
+  background-color: rgb(239, 240, 243);
+  padding-left: 0.2em; 
+  padding-right: 0.2em;
+  border-radius: 0.1em;
+  color: cornflowerblue;
+}
+
+.StatusAndLikes {
+  margin: 10px;
+  justify-content: end;
+}
+
+.ShopStatus {
+  font-size: 0.8em;
+  color: rgb(144, 255, 144);
+  font-weight: bold;
+}
+
+.LikeDislike {
+  display: flex;
+  font-size: 11px;
+}
+
+.Like {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.Dislike {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 1px;
+}
+
+.margin {
+  margin: 5px;
+}
+
+.shop-page {
+  font-family: visby;
+}
+
+.shop-tabs {
+  font-family: visby !important;
+  font-weight: bold;
+}
