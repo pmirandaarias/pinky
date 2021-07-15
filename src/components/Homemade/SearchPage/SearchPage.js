@@ -7,6 +7,7 @@ import InputBase from "@material-ui/core/InputBase"
 import IconButton from "@material-ui/core/IconButton"
 import SearchIcon from "@material-ui/icons/Search"
 import ArrowBackIcon from "@material-ui/icons/ArrowBack"
+import Button from "@material-ui/core/Button"
 import Grid from "@material-ui/core/Grid"
 // import FavoriteIcon from "@material-ui/icons/Favorite"
 
@@ -15,8 +16,9 @@ import {
   getAllCategories,
   getAllProducts,
   searchProducts,
+  getProductsByCategory,
 } from "../../../api/public/search"
-import CategoryList from "./CategoryList"
+// import CategoryList from "./CategoryList"
 import ProductList from "./ProductList"
 
 import "../ShopPage/components/ProductCard.css"
@@ -39,6 +41,16 @@ const useStyles = makeStyles((theme) => ({
     flexWrap: "wrap",
     justifyContent: "space-between",
   },
+  button: {
+    margin: theme.spacing(0.5),
+    border: "1px solid black",
+    borderRadius: "1em",
+    boxShadow: "1px 1px",
+  },
+  scrollMenu: {
+    overflow: "auto",
+    whiteSpace: "nowrap",
+  },
 }))
 
 const SearchPage = () => {
@@ -49,6 +61,14 @@ const SearchPage = () => {
   const [query, setQuery] = useState("")
   const [results, setResults] = useState([])
   const [isActive, setIsActive] = useState(false)
+  const [filteredCategory, setFilteredCategory] = useState([])
+  const [category, setCategory] = useState([])
+  const [limit, setLimit] = useState(10)
+  const [skip, setSkip] = useState(0)
+  const [location, setLocation] = useState({
+    long: 120.9868052,
+    lat: 14.6038269,
+  })
 
   useEffect(() => {
     getAllCategories().then((categories) => {
@@ -57,40 +77,85 @@ const SearchPage = () => {
     })
   }, [])
 
-  useEffect(() => {
-    getAllProducts().then((products) => {
-      setProducts(products)
-    })
-  }, [])
+  //   useEffect(() => {
+  //     getAllProducts().then((products) => {
+  //       setProducts(products)
+  //     })
+  //   }, [])
 
   useEffect(() => {
-    if (query === "") {
-      setIsActive(true)
-    } else {
-      setIsActive(false)
-    }
     loadProducts()
   }, [query])
+
+  useEffect(() => {
+    // console.log(category)
+
+    if (category.length != 0) {
+      getProductsByCategory(
+        location.long,
+        location.lat,
+        skip,
+        limit,
+        category
+      ).then((data) => {
+        //   console.log(data)
+        //   console.log("[x] clickfilters", data)
+        setFilteredCategory(data)
+        //   console.log(filteredCategory)
+        //   console.log(data.data.length)
+      })
+    }
+    console.log(category)
+  }, [category])
+
+  useEffect(() => {
+    if (typeof filteredCategory.data !== "undefined") {
+      console.log("unang if")
+      if (query != "") {
+        setProducts(results)
+      } else {
+        setProducts(filteredCategory.data)
+      }
+    } else if (query != "") {
+      if (query === "") {
+        getAllProducts().then((products) => {
+          setProducts(products)
+        })
+      } else {
+        console.log("2nd if")
+        setProducts(results)
+      }
+    } else {
+      getAllProducts().then((products) => {
+        setProducts(products)
+      })
+      console.log("3rd if")
+    }
+  }, [filteredCategory, results])
 
   const loadProducts = async () => {
     const results = await searchProducts(query)
     setResults(results)
     // console.log(results)
   }
-  console.log("[x] (SearchPage) isActive", isActive)
+  console.log(category)
+  //   console.log("[x] (SearchPage) isActive", isActive)
   console.log("[x] (SearchPage) products", products)
 
-  const handleChangeProducts = (newFilters) => {
-    console.log('[x] handleChangeProducts products]', products)
-    console.log('[x] handleChangeProducts newFilters]', newFilters)
-    // here a map with a filter, something like that. You use the newFilters
-    // loop on the products, and filter with those newFilters, but you have to
-    // fix the click on the other side, where are adding each id to the array, that's wrong
-    // const filteredProducts = products.filter((product) => )
-    // const filteredProducts = products
-    //console.log("[x] handleChangeProducts filteredProducts", filteredProducts)
-    setProducts(products)
+  let categoryArray = []
+  function clickFilters(categoryId) {
+    // categoryArray.push(categoryId)
+    // console.log(categoryId)
+    if (!category.includes(categoryId)) {
+      console.log("test")
+      setCategory((categoryArray) => [...categoryArray, categoryId])
+    } else {
+      const currentCategoryId = category.indexOf(categoryId)
+      category.splice(currentCategoryId, 1)
+      console.log(category)
+    }
   }
+
   return (
     <>
       <Grid container spacing={3}>
@@ -118,14 +183,26 @@ const SearchPage = () => {
           </Paper>
         </Grid>
       </Grid>
+      <div className={classes.scrollMenu}>
+        {categories.map((category) => {
+          return (
+            <>
+              <Button
+                key={category._id}
+                className={classes.button}
+                onClick={(e) => clickFilters(category._id)}
+              >
+                {category.name}
+              </Button>
+            </>
+          )
+        })}
+      </div>
+      {/* <Box pt={1}>
+        <CategoryList categories={categories} />
+    </Box> */}
       <Box pt={1}>
-        <CategoryList
-          categories={categories}
-          changeProducts={handleChangeProducts}
-        />
-      </Box>
-      <Box pt={1}>
-        <ProductList products={isActive ? products : results} />
+        <ProductList products={products} />
       </Box>
     </>
   )

@@ -20,12 +20,10 @@ const useStyles = makeStyles((theme) => ({
   },
 }))
 
-const CategoryList = ({ categories, changeProducts }) => {
+const CategoryList = ({ categories }) => {
   const classes = useStyles()
 
-  const [myFilters, setMyFilters] = useState({
-    filters: { category: [] },
-  })
+  const [category, setCategory] = useState([])
   const [limit, setLimit] = useState(10)
   const [skip, setSkip] = useState(0)
   const [location, setLocation] = useState({
@@ -33,51 +31,28 @@ const CategoryList = ({ categories, changeProducts }) => {
     lat: 14.6038269,
   })
 
-  const [data, setData] = useState([])
-  //   const handleClick = (e, categoryId) => {
-  //     e.preventDefault()
-  //     console.log(categoryId)
-  //   }
+  const [productsByCategory, setProductsByCategory] = useState([])
 
-  const loadFilteredResults = (newFilters) => {
-    console.log(newFilters)
+  useEffect(() => {
+    // console.log(category)
     getProductsByCategory(
       location.long,
       location.lat,
       skip,
       limit,
-      newFilters
+      category
     ).then((data) => {
-      console.log('[x] loadFilteredResults data', data)
+      console.log("clickfilters", data)
+      setProductsByCategory(data)
     })
+  }, [category])
+
+  let categoryArray = []
+  function clickFilters(categoryId) {
+    // categoryArray.push(categoryId)
+    setCategory((categoryArray) => [...categoryArray, categoryId])
   }
 
-  const clickFilters = (filterBy, categoryId) => {
-    console.log("[x] (clickFilters) Product", filterBy, categoryId)
-    console.log("[x] (clickFilters) myFilters", myFilters.filters.category)
-    const categoryIdArray = myFilters.filters.category
-    console.log("categoryIdArray", categoryIdArray)
-    // this one has to be fixed
-    const isThere = categoryIdArray.includes(categoryId)
-    console.log("isTgere", isThere)
-    const newFilters = {
-      ...myFilters,
-      filters: {
-        [filterBy]: isThere ? [...myFilters.filters[filterBy], categoryId] : [],
-      },
-    }
-    console.log("[x] (clickFilters) newFilters", newFilters)
-    loadFilteredResults(newFilters.filters)
-    setMyFilters(newFilters)
-    changeProducts(newFilters)
-  }
-
-  useEffect(() => {
-    loadFilteredResults(myFilters.filters)
-  }, [])
-
-  console.log("[x] categories", categories)
-  console.log("[x] myFilters", myFilters)
   return (
     <div className={classes.scrollMenu}>
       {categories.map((category) => {
@@ -85,7 +60,7 @@ const CategoryList = ({ categories, changeProducts }) => {
           <Button
             key={category._id}
             className={classes.button}
-            onClick={() => clickFilters("category", category._id)}
+            onClick={(e) => clickFilters(category._id)}
           >
             {category.name}
           </Button>
