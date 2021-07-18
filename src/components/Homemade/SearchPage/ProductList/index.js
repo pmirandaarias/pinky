@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useState, useEffect } from "react"
 
 import { Link } from "gatsby"
 
@@ -16,8 +16,50 @@ const useStyles = makeStyles({
   },
 })
 
+function getFromLocalStorage(key) {
+  return JSON.parse(localStorage.getItem(key))
+}
+
+function setToLocalStorage(key, data) {
+  localStorage.setItem(key, JSON.stringify(data))
+}
+
+export const favouriteProductsStorageKey = "favorites_products"
+
 const ProductList = ({ products }) => {
   const classes = useStyles()
+
+  const [favorites, setFavorites] = useState(getAllFavouriteProducts())
+
+  function addFavorite(product) {
+    const isProductAlreadyFavourite = isProductInFavourites(product)
+
+    if (isProductAlreadyFavourite) return
+
+    const newFavouriteProducts = [...favorites, product]
+
+    setFavorites(newFavouriteProducts)
+    setToLocalStorage(favouriteProductsStorageKey, newFavouriteProducts)
+  }
+
+  function removeFavorite(product) {
+    const newFavouriteProducts = favorites.filter(
+      (iteratedProduct) => iteratedProduct._id !== product._id
+    )
+
+    setFavorites(newFavouriteProducts)
+    setToLocalStorage(favouriteProductsStorageKey, newFavouriteProducts)
+  }
+
+  function isProductInFavourites(product) {
+    return favorites.some(
+      (iteratedProduct) => iteratedProduct._id === product._id
+    )
+  }
+
+  function getAllFavouriteProducts() {
+    return getFromLocalStorage(favouriteProductsStorageKey) || []
+  }
 
   return (
     <>
@@ -34,7 +76,19 @@ const ProductList = ({ products }) => {
                   />
                 </Link>
                 <div className="FavButton">
-                  <FavoriteIcon fontSize="small" style={{ fill: "gray" }} />
+                  {isProductInFavourites(product) ? (
+                    <FavoriteIcon
+                      fontSize="small"
+                      style={{ fill: "red" }}
+                      onClick={() => removeFavorite(product)}
+                    />
+                  ) : (
+                    <FavoriteIcon
+                      fontSize="small"
+                      style={{ fill: "gray" }}
+                      onClick={() => addFavorite(product)}
+                    />
+                  )}
                 </div>
               </div>
               <div className="ProductCardDetails">
