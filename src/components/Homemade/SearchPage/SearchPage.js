@@ -47,6 +47,13 @@ const useStyles = makeStyles((theme) => ({
     borderRadius: "1em",
     boxShadow: "1px 1px",
   },
+  buttonDark: {
+    margin: theme.spacing(0.5),
+    background: '#DDD',
+    border: "1px solid black",
+    borderRadius: "1em",
+    boxShadow: "1px 1px",
+  },
   scrollMenu: {
     overflow: "auto",
     whiteSpace: "nowrap",
@@ -69,6 +76,8 @@ const SearchPage = () => {
     long: 120.9868052,
     lat: 14.6038269,
   })
+  const [dark, setDark] = useState(false)
+  const [activeCategory, setActiveCategory] = useState('')
 
   useEffect(() => {
     getAllCategories().then((categories) => {
@@ -144,8 +153,14 @@ const SearchPage = () => {
 
   let categoryArray = []
   function clickFilters(categoryId) {
+    console.log('[Y] clickFilters categoryId', categoryId);
     // categoryArray.push(categoryId)
     // console.log(categoryId)
+    if (activeCategory === categoryId) {
+      setActiveCategory('')
+    } else {
+      setActiveCategory(categoryId)
+    }
     if (!category.includes(categoryId)) {
       console.log("test")
       setCategory((categoryArray) => [...categoryArray, categoryId])
@@ -189,7 +204,7 @@ const SearchPage = () => {
             <>
               <Button
                 key={category._id}
-                className={classes.button}
+                className={activeCategory === category._id ? classes.buttonDark : classes.button}
                 onClick={(e) => clickFilters(category._id)}
               >
                 {category.name}
