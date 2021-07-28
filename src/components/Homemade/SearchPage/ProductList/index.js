@@ -1,9 +1,11 @@
-import React, { useState, useEffect } from "react"
+import React, { useState } from "react"
 
 import { Link } from "gatsby"
 
 import FavoriteIcon from "@material-ui/icons/Favorite"
 import { makeStyles } from "@material-ui/core/styles"
+
+import { createFavoriteHelpers, getAllFavoriteProducts } from "../../helpers"
 
 import "../../ShopPage/components/ProductCard.css"
 import "../../ShopPage/components/Menu.css"
@@ -13,53 +15,15 @@ const useStyles = makeStyles({
     display: "flex",
     flexWrap: "wrap",
     justifyContent: "space-between",
+    margin: "-20px 0 100px 0",
   },
 })
-
-function getFromLocalStorage(key) {
-  return JSON.parse(localStorage.getItem(key))
-}
-
-function setToLocalStorage(key, data) {
-  localStorage.setItem(key, JSON.stringify(data))
-}
-
-export const favouriteProductsStorageKey = "favorites_products"
 
 const ProductList = ({ products }) => {
   const classes = useStyles()
 
-  const [favorites, setFavorites] = useState(getAllFavouriteProducts())
-
-  function addFavorite(product) {
-    const isProductAlreadyFavourite = isProductInFavourites(product)
-
-    if (isProductAlreadyFavourite) return
-
-    const newFavouriteProducts = [...favorites, product]
-
-    setFavorites(newFavouriteProducts)
-    setToLocalStorage(favouriteProductsStorageKey, newFavouriteProducts)
-  }
-
-  function removeFavorite(product) {
-    const newFavouriteProducts = favorites.filter(
-      (iteratedProduct) => iteratedProduct._id !== product._id
-    )
-
-    setFavorites(newFavouriteProducts)
-    setToLocalStorage(favouriteProductsStorageKey, newFavouriteProducts)
-  }
-
-  function isProductInFavourites(product) {
-    return favorites.some(
-      (iteratedProduct) => iteratedProduct._id === product._id
-    )
-  }
-
-  function getAllFavouriteProducts() {
-    return getFromLocalStorage(favouriteProductsStorageKey) || []
-  }
+  const [favorites, setFavorites] = useState(getAllFavoriteProducts())
+  const favoriteHelpers = createFavoriteHelpers(favorites, setFavorites)
 
   return (
     <>
@@ -68,7 +32,7 @@ const ProductList = ({ products }) => {
           return (
             <div className="ProductCard" key={product._id}>
               <div>
-                <Link to="#">
+                <Link to="/shop" state={{ shop: product.shop }}>
                   <img
                     className="ProductImage"
                     src={product.imagePrimary}
@@ -76,17 +40,17 @@ const ProductList = ({ products }) => {
                   />
                 </Link>
                 <div className="FavButton">
-                  {isProductInFavourites(product) ? (
+                  {favoriteHelpers.isProductInFavorites(product) ? (
                     <FavoriteIcon
                       fontSize="small"
                       style={{ fill: "red" }}
-                      onClick={() => removeFavorite(product)}
+                      onClick={() => favoriteHelpers.removeFavorite(product)}
                     />
                   ) : (
                     <FavoriteIcon
                       fontSize="small"
                       style={{ fill: "gray" }}
-                      onClick={() => addFavorite(product)}
+                      onClick={() => favoriteHelpers.addFavorite(product)}
                     />
                   )}
                 </div>
